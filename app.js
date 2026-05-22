@@ -1,3 +1,22 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAINxTtXeNe93rlFb-xHbEeCIaMBFbminY",
+  authDomain: "tanne-cb8d4.firebaseapp.com",
+  projectId: "tanne-cb8d4",
+  storageBucket: "tanne-cb8d4.firebasestorage.app",
+  messagingSenderId: "701467555469",
+  appId: "1:701467555469:web:b268ae55ba501840b4d4c4",
+  measurementId: "G-YNZXHXRHD7",
+  databaseURL: "https://tanne-cb8d4-default-rtdb.firebaseio.com"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
+
+// ── MENU ──
 const MENU = [
   {
     category: "Main Course",
@@ -40,53 +59,85 @@ MENU.forEach(cat => cat.items.forEach(item => {
   else PRICE[item] = 220;
 }));
 
+// ── STATE ──
 let currentUser = "Staff";
 let currentTable = null;
-let orders = JSON.parse(localStorage.getItem('tanne_orders') || '{}');
-let savedOrders = JSON.parse(localStorage.getItem('tanne_saved_orders') || '{}');
+let orders = {};
+let savedOrders = {};
 
+// ── INIT ──
 window.onload = () => {
   showScreen('splash');
   setTimeout(() => showScreen('login'), 2200);
+
+  // Listen to all orders in real time from Firebase
+  onValue(ref(db, 'orders'), snapshot => {
+    orders = snapshot.val() || {};
+    if (document.getElementById('dashboard').classList.contains('active')) {
+      renderDashboard();
+    }
+  });
+
+  onValue(ref(db, 'savedOrders'), snapshot => {
+    savedOrders = snapshot.val() || {};
+    if (document.getElementById('dashboard').classList.contains('active')) {
+      renderDashboard();
+    }
+    if (currentTable && document.getElementById('order').classList.contains('active')) {
+      renderSavedOrders();
+    }
+    if (document.getElementById('admin').classList.contains('active')) {
+      renderAdmin();
+    }
+  });
 };
 
-function saveData() {
-  localStorage.setItem('tanne_orders', JSON.stringify(orders));
-  localStorage.setItem('tanne_saved_orders', JSON.stringify(savedOrders));
-}
-
+// ── SCREENS ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
 }
+window.showScreen = showScreen;
 
-// LOGIN
-function doLogin() {
+// ── SAVE TO FIREBASE ──
+async function saveOrders() {
+  await set(ref(db, 'orders'), orders);
+}
+
+async function saveSavedOrders() {
+  await set(ref(db, 'savedOrders'), savedOrders);
+}
+
+// ── LOGIN ──
+window.doLogin = function() {
   const email = document.getElementById('loginEmail').value || "staff@tanne.com";
   currentUser = email.split('@')[0] || "Staff";
   currentUser = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
   document.getElementById('userAvatar').textContent = currentUser.charAt(0).toUpperCase();
   document.getElementById('orderAvatar').textContent = currentUser.charAt(0).toUpperCase();
-  renderDashboard();
+
+  // Check if admin
+  const isAdmin = email.toLowerCase().includes('admin');
+  renderDashboard(isAdmin);
   showScreen('dashboard');
-}
+};
 
-function doLogout() {
+window.doLogout = function() {
   showScreen('login');
-}
+};
 
-// DASHBOARD
-function renderDashboard() {
+// ── DASHBOARD ──
+function renderDashboard(isAdmin = false) {
   const grid = document.getElementById('tablesGrid');
   grid.innerHTML = '';
   for (let i = 1; i <= 11; i++) {
-    const key = `Table ${i}`;
-    const tableOrders = orders[key] || {};
-    const saved = savedOrders[key] || [];
+    const key = `Table_${i}`;
+    const tableOrders = (orders && orders[key]) || {};
+    const saved = (savedOrders && savedOrders[key]) || [];
     const count = Object.values(tableOrders).reduce((a, b) => a + b, 0);
-    const savedCount = saved.reduce((total, entry) =>
-      total + Object.values(entry.items).reduce((a, b) => a + b, 0), 0);
+    const savedCount = Array.isArray(saved) ? saved.reduce((total, entry) =>
+      total + Object.values(entry.items || {}).reduce((a, b) => a + b, 0), 0) : 0;
     const hasActivity = count > 0 || savedCount > 0;
     grid.innerHTML += `
       <div class="table-card ${hasActivity ? 'has-orders' : ''}" onclick="openTable(${i})">
@@ -103,30 +154,42 @@ function renderDashboard() {
         <div class="table-status">${hasActivity ? (count + savedCount) + ' items' : 'Available'}</div>
       </div>`;
   }
-}
 
-// ORDER
-function openTable(num) {
-  currentTable = `Table ${num}`;
+  // Admin button — always show
+  grid.insertAdjacentHTML('afterend', `
+    <button class="admin-btn" onclick="showScreen('admin'); renderAdmin();">
+      <svg width="15" height="15" fill="none" stroke="#C9A84C" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+      ADMIN PANEL
+    </button>
+  `);
+}
+window.renderDashboard = renderDashboard;
+
+// ── ORDER ──
+window.openTable = function(num) {
+  currentTable = `Table_${num}`;
   if (!orders[currentTable]) orders[currentTable] = {};
-  document.getElementById('orderTableTitle').textContent = currentTable;
+  document.getElementById('orderTableTitle').textContent = `Table ${num}`;
   document.getElementById('searchInput').value = '';
   renderSavedOrders();
   renderMenu('');
   updateCartBar();
   showScreen('order');
-}
+};
 
-function goBack() {
+window.goBack = function() {
   renderDashboard();
   showScreen('dashboard');
-}
+};
 
-// SAVED ORDERS
+// ── SAVED ORDERS ──
 function renderSavedOrders() {
   const wrap = document.getElementById('savedOrdersWrap');
-  const saved = savedOrders[currentTable] || [];
-  if (saved.length === 0) { wrap.innerHTML = ''; return; }
+  const saved = (savedOrders && savedOrders[currentTable]) || [];
+  if (!Array.isArray(saved) || saved.length === 0) { wrap.innerHTML = ''; return; }
 
   let html = `<div class="saved-orders-section">
     <div class="saved-orders-header">
@@ -138,7 +201,7 @@ function renderSavedOrders() {
     </div>`;
 
   saved.forEach((entry) => {
-    const itemLines = Object.entries(entry.items)
+    const itemLines = Object.entries(entry.items || {})
       .map(([item, qty]) => `${item} x${qty} — ₹${(PRICE[item] || 0) * qty}`)
       .join('<br>');
     html += `
@@ -163,8 +226,8 @@ function renderSavedOrders() {
   wrap.innerHTML = html;
 }
 
-// SAVE ORDER
-function saveOrder() {
+// ── SAVE ORDER ──
+window.saveOrder = async function() {
   const tableOrders = orders[currentTable] || {};
   const items = Object.entries(tableOrders).filter(([, q]) => q > 0);
   if (items.length === 0) { alert('No items to save!'); return; }
@@ -181,14 +244,15 @@ function saveOrder() {
   });
 
   orders[currentTable] = {};
-  saveData();
+  await saveOrders();
+  await saveSavedOrders();
   renderSavedOrders();
   renderMenu('');
   updateCartBar();
   alert(`Order saved by ${currentUser} at ${time}`);
-}
+};
 
-// MENU
+// ── MENU ──
 function renderMenu(query) {
   const scroll = document.getElementById('menuScroll');
   const q = query.toLowerCase().trim();
@@ -232,25 +296,25 @@ function renderMenu(query) {
   scroll.innerHTML = html;
 }
 
-function changeQty(item, delta) {
+window.changeQty = async function(item, delta) {
   if (!orders[currentTable]) orders[currentTable] = {};
   const cur = orders[currentTable][item] || 0;
   const next = cur + delta;
   if (next <= 0) delete orders[currentTable][item];
   else orders[currentTable][item] = next;
-  saveData();
+  await saveOrders();
   renderMenu(document.getElementById('searchInput').value);
   updateCartBar();
-}
+};
 
-function filterMenu() {
+window.filterMenu = function() {
   renderMenu(document.getElementById('searchInput').value);
-}
+};
 
-function clearSearch() {
+window.clearSearch = function() {
   document.getElementById('searchInput').value = '';
   renderMenu('');
-}
+};
 
 function updateCartBar() {
   const tableOrders = orders[currentTable] || {};
@@ -263,28 +327,30 @@ function updateCartBar() {
   document.getElementById('cartTotal').textContent = '₹' + total;
 }
 
-// BILL
-function generateBill() {
-  const saved = savedOrders[currentTable] || [];
+// ── BILL ──
+window.generateBill = function() {
+  const saved = (savedOrders && savedOrders[currentTable]) || [];
   const current = orders[currentTable] || {};
   const currentItems = Object.entries(current).filter(([, q]) => q > 0);
 
-  if (saved.length === 0 && currentItems.length === 0) {
+  if ((!Array.isArray(saved) || saved.length === 0) && currentItems.length === 0) {
     alert('No items added yet!'); return;
   }
 
   const merged = {};
-  saved.forEach(entry => {
-    Object.entries(entry.items).forEach(([item, qty]) => {
-      merged[item] = (merged[item] || 0) + qty;
+  if (Array.isArray(saved)) {
+    saved.forEach(entry => {
+      Object.entries(entry.items || {}).forEach(([item, qty]) => {
+        merged[item] = (merged[item] || 0) + qty;
+      });
     });
-  });
+  }
   currentItems.forEach(([item, qty]) => {
     merged[item] = (merged[item] || 0) + qty;
   });
 
   const now = new Date();
-  document.getElementById('billTable').textContent = currentTable;
+  document.getElementById('billTable').textContent = currentTable.replace('_', ' ');
   document.getElementById('billDate').textContent = now.toLocaleDateString('en-IN');
   document.getElementById('billTime').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
@@ -309,14 +375,91 @@ function generateBill() {
   document.getElementById('billTotal').textContent = '₹' + total;
 
   showScreen('bill');
-}
+};
 
-function clearTable() {
-  if (confirm(`Clear all orders for ${currentTable}?`)) {
+window.clearTable = async function() {
+  if (confirm(`Clear all orders for ${currentTable.replace('_', ' ')}?`)) {
     orders[currentTable] = {};
     savedOrders[currentTable] = [];
-    saveData();
+    await saveOrders();
+    await saveSavedOrders();
     renderDashboard();
     showScreen('dashboard');
   }
-}
+};
+
+// ── ADMIN ──
+window.renderAdmin = function() {
+  let totalSales = 0;
+  let activeTables = 0;
+  let totalItems = 0;
+  let html = '';
+
+  for (let i = 1; i <= 11; i++) {
+    const key = `Table_${i}`;
+    const tableOrders = (orders && orders[key]) || {};
+    const saved = (savedOrders && savedOrders[key]) || [];
+
+    const merged = {};
+    if (Array.isArray(saved)) {
+      saved.forEach(entry => {
+        Object.entries(entry.items || {}).forEach(([item, qty]) => {
+          merged[item] = (merged[item] || 0) + qty;
+        });
+      });
+    }
+    Object.entries(tableOrders).forEach(([item, qty]) => {
+      merged[item] = (merged[item] || 0) + qty;
+    });
+
+    const itemCount = Object.values(merged).reduce((a, b) => a + b, 0);
+    let tableTotal = 0;
+    Object.entries(merged).forEach(([item, qty]) => {
+      tableTotal += (PRICE[item] || 0) * qty;
+    });
+
+    if (itemCount > 0) {
+      activeTables++;
+      totalItems += itemCount;
+      totalSales += tableTotal;
+
+      html += `
+        <div class="admin-table-row active-table">
+          <div>
+            <div class="admin-table-name">Table ${i}</div>
+            <div class="admin-table-info">${itemCount} items</div>
+          </div>
+          <div class="admin-table-amount">₹${tableTotal}</div>
+        </div>`;
+    } else {
+      html += `
+        <div class="admin-table-row">
+          <div>
+            <div class="admin-table-name">Table ${i}</div>
+            <div class="admin-table-info">Available</div>
+          </div>
+          <div class="admin-table-amount" style="color:var(--gray)">—</div>
+        </div>`;
+    }
+  }
+
+  document.getElementById('adminStats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-value">₹${totalSales}</div>
+      <div class="stat-label">Total Sales</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${activeTables}</div>
+      <div class="stat-label">Active Tables</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${totalItems}</div>
+      <div class="stat-label">Total Items</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${11 - activeTables}</div>
+      <div class="stat-label">Free Tables</div>
+    </div>
+  `;
+  document.getElementById('adminTableList').innerHTML = html;
+};
