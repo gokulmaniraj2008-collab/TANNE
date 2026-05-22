@@ -19,7 +19,6 @@ body {
   min-height: 100vh;
 }
 
-/* SCREENS */
 .screen { display: none; min-height: 100vh; flex-direction: column; }
 .screen.active { display: flex; }
 
@@ -32,21 +31,16 @@ body {
 .logo-wrap { text-align: center; animation: fadeUp 1.2s ease forwards; }
 .logo-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 52px;
-  font-weight: 700;
-  letter-spacing: 12px;
-  color: var(--gold);
+  font-size: 52px; font-weight: 700;
+  letter-spacing: 12px; color: var(--gold);
   text-shadow: 0 0 40px rgba(201,168,76,0.4);
 }
 .logo-tagline {
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: var(--gray);
-  margin-top: 8px;
+  font-size: 10px; letter-spacing: 4px;
+  color: var(--gray); margin-top: 8px;
 }
 .splash-bar {
-  width: 0;
-  height: 2px;
+  width: 0; height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
   margin: 30px auto 0;
   animation: barGrow 1.5s 0.8s ease forwards;
@@ -59,8 +53,7 @@ body {
 
 /* LOGIN */
 #login {
-  align-items: center;
-  justify-content: center;
+  align-items: center; justify-content: center;
   background: radial-gradient(ellipse at 30% 40%, #1a1000 0%, #0A0A0A 60%);
   padding: 30px 20px;
 }
@@ -68,8 +61,7 @@ body {
   width: 100%; max-width: 380px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(201,168,76,0.2);
-  border-radius: 16px;
-  padding: 40px 30px;
+  border-radius: 16px; padding: 40px 30px;
   animation: fadeUp 0.6s ease;
 }
 .login-logo { text-align: center; margin-bottom: 30px; }
@@ -90,18 +82,15 @@ body {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(201,168,76,0.25);
   border-radius: 8px; padding: 13px 16px;
-  color: var(--white);
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px; outline: none;
-  transition: border-color 0.3s;
+  color: var(--white); font-family: 'Montserrat', sans-serif;
+  font-size: 14px; outline: none; transition: border-color 0.3s;
 }
 .field input:focus { border-color: var(--gold); }
 .forgot { text-align: right; font-size: 11px; color: var(--gray); margin-bottom: 24px; cursor: pointer; }
 .btn-gold {
   width: 100%; padding: 14px;
   background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
-  border: none; border-radius: 8px;
-  color: var(--black);
+  border: none; border-radius: 8px; color: var(--black);
   font-family: 'Montserrat', sans-serif;
   font-size: 13px; font-weight: 700;
   letter-spacing: 3px; text-transform: uppercase;
@@ -112,14 +101,12 @@ body {
 .divider hr { flex: 1; border: none; border-top: 1px solid rgba(201,168,76,0.15); }
 .divider span { font-size: 11px; color: var(--gray); }
 .google-btn {
-  width: 100%; padding: 13px;
-  background: transparent;
+  width: 100%; padding: 13px; background: transparent;
   border: 1px solid rgba(201,168,76,0.3);
   border-radius: 8px; color: var(--white);
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px; font-weight: 500;
-  cursor: pointer; display: flex;
-  align-items: center; justify-content: center; gap: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
   transition: background 0.2s;
 }
 .google-btn:hover { background: rgba(201,168,76,0.08); }
@@ -142,8 +129,7 @@ body {
   font-size: 14px; font-weight: 700; color: var(--black);
 }
 .logout-btn {
-  background: none;
-  border: 1px solid rgba(201,168,76,0.3);
+  background: none; border: 1px solid rgba(201,168,76,0.3);
   border-radius: 6px; color: var(--gold);
   font-size: 11px; letter-spacing: 1px;
   padding: 5px 10px; cursor: pointer;
@@ -159,9 +145,8 @@ body {
   color: var(--gold); margin-bottom: 4px;
 }
 .section-sub {
-  font-size: 11px; letter-spacing: 2px;
-  color: var(--gray); text-transform: uppercase;
-  margin-bottom: 24px;
+  font-size: 11px; letter-spacing: 2px; color: var(--gray);
+  text-transform: uppercase; margin-bottom: 24px;
 }
 .tables-grid {
   display: grid;
@@ -194,8 +179,7 @@ body {
 .table-icon { font-size: 26px; margin-bottom: 8px; }
 .table-num {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 17px; font-weight: 700;
-  color: var(--gold);
+  font-size: 17px; font-weight: 700; color: var(--gold);
 }
 .table-status { font-size: 9px; letter-spacing: 1px; color: var(--gray); margin-top: 4px; }
 .table-badge {
@@ -205,13 +189,22 @@ body {
   width: 18px; height: 18px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
 }
+.admin-btn {
+  width: 100%; margin-top: 20px; padding: 13px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 10px; color: var(--gold);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
 
 /* ORDER PAGE */
 #order { background: var(--black); }
 .order-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .order-search-bar {
-  padding: 12px 16px;
-  background: var(--black2);
+  padding: 12px 16px; background: var(--black2);
   border-bottom: 1px solid rgba(201,168,76,0.1);
 }
 .search-input-wrap {
@@ -262,9 +255,8 @@ body {
 .add-btn {
   padding: 6px 14px;
   background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  border: none; border-radius: 6px;
-  color: var(--black); font-size: 11px;
-  font-weight: 700; letter-spacing: 1px;
+  border: none; border-radius: 6px; color: var(--black);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
   cursor: pointer; font-family: 'Montserrat', sans-serif;
 }
 .no-results { text-align: center; color: var(--gray); padding: 40px 20px; font-size: 13px; }
@@ -274,15 +266,13 @@ body {
   margin: 14px 14px 0 14px;
   background: rgba(201,168,76,0.05);
   border: 1px solid rgba(201,168,76,0.25);
-  border-radius: 12px;
-  overflow: hidden;
+  border-radius: 12px; overflow: hidden;
 }
 .saved-orders-header {
   padding: 10px 14px;
   background: rgba(201,168,76,0.1);
   font-size: 11px; letter-spacing: 2px;
-  color: var(--gold); text-transform: uppercase;
-  font-weight: 600;
+  color: var(--gold); text-transform: uppercase; font-weight: 600;
   display: flex; align-items: center; gap: 6px;
 }
 .saved-order-entry {
@@ -307,22 +297,17 @@ body {
 .cart-info span { color: var(--gold); font-weight: 700; }
 .cart-actions { display: flex; gap: 8px; }
 .btn-save {
-  padding: 10px 16px;
-  background: transparent;
-  border: 1px solid var(--gold);
-  border-radius: 8px; color: var(--gold);
+  padding: 10px 16px; background: transparent;
+  border: 1px solid var(--gold); border-radius: 8px; color: var(--gold);
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 1px; cursor: pointer;
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
 }
 .btn-bill {
   padding: 10px 16px;
   background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
-  border: none; border-radius: 8px;
-  color: var(--black);
+  border: none; border-radius: 8px; color: var(--black);
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 1px; cursor: pointer;
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
 }
 
 /* BILL */
@@ -351,8 +336,7 @@ body {
 }
 .bill-actions { display: flex; gap: 10px; margin-top: 24px; }
 .btn-outline {
-  flex: 1; padding: 13px;
-  background: transparent;
+  flex: 1; padding: 13px; background: transparent;
   border: 1px solid rgba(201,168,76,0.3);
   border-radius: 8px; color: var(--white);
   font-family: 'Montserrat', sans-serif;
@@ -365,3 +349,38 @@ body {
   font-family: 'Montserrat', sans-serif;
   font-size: 12px; font-weight: 700; cursor: pointer;
 }
+
+/* ADMIN */
+#admin { background: var(--black); }
+.admin-stats {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 12px; margin-bottom: 10px;
+}
+.stat-card {
+  background: var(--black3);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px; padding: 16px;
+  text-align: center;
+}
+.stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 700; color: var(--gold);
+}
+.stat-label { font-size: 10px; letter-spacing: 1px; color: var(--gray); margin-top: 4px; }
+.admin-table-row {
+  background: var(--black3);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 10px; padding: 14px 16px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.admin-table-row.active-table {
+  border-color: rgba(201,168,76,0.4);
+  background: rgba(201,168,76,0.05);
+}
+.admin-table-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 700; color: var(--gold);
+}
+.admin-table-info { font-size: 11px; color: var(--gray); margin-top: 3px; }
+.admin-table-amount { font-size: 14px; font-weight: 700; color: var(--gold); }
