@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TANNE RESTOBAR</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- SPLASH -->
+<div id="splash" class="screen active">
+  <div class="logo-wrap">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;margin:0 auto 20px">
+      <circle cx="40" cy="40" r="38" stroke="#C9A84C" stroke-width="1.5"/>
+      <path d="M26 28 Q40 18 54 28 L54 52 Q40 62 26 52 Z" stroke="#C9A84C" stroke-width="1.2" fill="none"/>
+      <path d="M33 36 L40 30 L47 36 L47 48 L40 54 L33 48 Z" fill="#C9A84C" opacity="0.15"/>
+      <path d="M33 36 L40 30 L47 36 L47 48 L40 54 L33 48 Z" stroke="#C9A84C" stroke-width="1"/>
+      <line x1="40" y1="30" x2="40" y2="54" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+      <line x1="33" y1="42" x2="47" y2="42" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+    </svg>
+    <div class="logo-name">TANNE</div>
+    <div class="logo-tagline">Fine Dining Experience</div>
+    <div class="splash-bar"></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="screen">
+  <div class="login-card">
+    <div class="login-logo"><div class="logo-name">TANNE RESTOBAR</div></div>
+    <div class="login-title">Welcome Back</div>
+    <div class="error-msg" id="loginError">Invalid email or password.</div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="staff@tanne.com"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••"/>
+    </div>
+    <div class="forgot">Forgot Password?</div>
+    <button class="btn-gold" onclick="doLogin()">LOGIN</button>
+    <div class="divider"><hr/><span>OR</span><hr/></div>
+    <div class="signup-text">New staff member? <span onclick="showScreen('signup')">Create Account</span></div>
+  </div>
+</div>
+
+<!-- SIGNUP -->
+<div id="signup" class="screen">
+  <div class="login-card">
+    <div class="login-logo"><div class="logo-name">TANNE RESTOBAR</div></div>
+    <div class="login-title">Create Account</div>
+    <div class="error-msg" id="signupError"></div>
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="signupName" placeholder="Your name"/>
+    </div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="signupEmail" placeholder="you@tanne.com"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="signupPass" placeholder="Min. 6 characters"/>
+    </div>
+    <button class="btn-gold" onclick="doSignup()">CREATE ACCOUNT</button>
+    <div class="signup-text">Already have an account? <span onclick="showScreen('login')">Login</span></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen">
+  <div class="app-header">
+    <div class="logo-name">TANNE</div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="showScreen('settings')" title="Settings">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <div class="avatar" id="userAvatar" onclick="showScreen('settings')">S</div>
+    </div>
+  </div>
+  <div class="dashboard-body">
+    <div class="section-title">Table Overview</div>
+    <div class="section-sub">Select a table to manage orders</div>
+    <div class="tables-grid" id="tablesGrid"></div>
+  </div>
+</div>
+
+<!-- ORDER -->
+<div id="order" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="goBack()">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="logo-name">TANNE RESTOBAR</div>
+    <div class="avatar" id="orderAvatar">S</div>
+  </div>
+  <div style="padding:12px 16px 0;background:var(--black2);border-bottom:1px solid rgba(201,168,76,0.1)">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold)" id="orderTableTitle">Table 1</div>
+    <div style="font-size:10px;letter-spacing:2px;color:var(--gray);padding-bottom:10px">TAP ITEM TO ADD · ADJUST QUANTITY</div>
+  </div>
+  <div class="order-body">
+    <div class="order-search-bar">
+      <div class="search-input-wrap">
+        <svg width="16" height="16" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" id="searchInput" placeholder="Search menu..." oninput="filterMenu()"/>
+        <button class="clear-search" onclick="clearSearch()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="menu-scroll" id="menuScroll"></div>
+    <div class="cart-bar">
+      <div class="cart-summary">
+        <div>Items: <span id="cartCount">0</span></div>
+        <div>Total: <span id="cartTotal">₹0</span></div>
+      </div>
+      <button class="checkout-btn" onclick="generateBill()">Generate Bill</button>
+    </div>
+  </div>
+</div>
+
+<!-- BILL -->
+<div id="bill" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="showScreen('order')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="logo-name">TANNE RESTOBAR</div>
+    <div></div>
+  </div>
+  <div class="bill-body">
+    <div class="bill-header">
+      <div class="bill-title">TANNE RESTOBAR</div>
+      <div class="bill-sub">FINE DINING · BILL RECEIPT</div>
+    </div>
+    <hr class="bill-divider"/>
+    <div class="bill-table-info">
+      <div>Table: <span id="billTable">-</span></div>
+      <div>Date: <span id="billDate">-</span></div>
+      <div>Time: <span id="billTime">-</span></div>
+    </div>
+    <hr class="bill-divider"/>
+    <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:1px;color:var(--gray);padding-bottom:8px">
+      <span>ITEM</span><span>QTY</span><span>PRICE</span>
+    </div>
+    <div class="bill-items" id="billItems"></div>
+    <hr class="bill-divider"/>
+    <div class="bill-total-row"><div class="t-label">Subtotal</div><div class="t-val" id="billSubtotal">₹0</div></div>
+    <div class="bill-total-row" style="font-size:12px;opacity:0.7"><div class="t-label">GST (5%)</div><div class="t-val" id="billGST">₹0</div></div>
+    <hr class="bill-divider"/>
+    <div class="bill-total-row" style="font-size:17px"><div class="t-label">TOTAL</div><div class="t-val" id="billTotal">₹0</div></div>
+    <div class="bill-actions">
+      <button class="btn-outline" onclick="clearTable()">Clear Table</button>
+      <button class="btn-print" onclick="window.print()">Print Bill</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="showScreen('dashboard')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="logo-name" style="font-size:18px;letter-spacing:4px">SETTINGS</div>
+    <div></div>
+  </div>
+  <div class="settings-body">
+    <div class="settings-section">
+      <div class="settings-section-title">Account</div>
+      <div class="settings-card">
+        <div class="settings-row" onclick="showScreen('profile')">
+          <div class="settings-row-left">
+            <div class="settings-icon gold">
+              <svg width="18" height="18" fill="none" stroke="#C9A84C" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <div class="settings-row-label">My Profile</div>
+              <div class="settings-row-sub" id="settingsProfileSub">View and edit your profile</div>
+            </div>
+          </div>
+          <svg class="settings-arrow" width="18" height="18" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Admin</div>
+      <div class="settings-card">
+        <div class="settings-row" onclick="showScreen('menuEditor')">
+          <div class="settings-row-left">
+            <div class="settings-icon gold">
+              <svg width="18" height="18" fill="none" stroke="#C9A84C" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12h8M12 8v8"/></svg>
+            </div>
+            <div>
+              <div class="settings-row-label">Menu Editor</div>
+              <div class="settings-row-sub">Add, edit or remove menu items</div>
+            </div>
+          </div>
+          <svg class="settings-arrow" width="18" height="18" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Session</div>
+      <div class="settings-card">
+        <div class="settings-row" onclick="doLogout()">
+          <div class="settings-row-left">
+            <div class="settings-icon red">
+              <svg width="18" height="18" fill="none" stroke="#ff6b6b" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </div>
+            <div>
+              <div class="settings-row-label" style="color:#ff6b6b">Logout</div>
+              <div class="settings-row-sub">Sign out of your account</div>
+            </div>
+          </div>
+          <svg class="settings-arrow" width="18" height="18" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="showScreen('settings')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="logo-name" style="font-size:18px;letter-spacing:4px">PROFILE</div>
+    <div></div>
+  </div>
+  <div class="profile-body">
+    <div class="profile-hero">
+      <div class="profile-avatar-big" id="profileAvatarBig">S</div>
+      <div class="profile-name-big" id="profileNameBig">Staff</div>
+      <div class="profile-email-big" id="profileEmailBig">staff@tanne.com</div>
+      <div class="profile-role-badge">Staff Member</div>
+    </div>
+    <div class="profile-card">
+      <div class="profile-field">
+        <label>Full Name</label>
+        <input type="text" id="profileName" disabled/>
+      </div>
+      <div class="profile-field">
+        <label>Email Address</label>
+        <input type="email" id="profileEmail" disabled/>
+      </div>
+      <div class="profile-field">
+        <label>Password</label>
+        <input type="password" id="profilePass" disabled placeholder="••••••••"/>
+      </div>
+    </div>
+    <button class="profile-edit-btn" id="profileEditBtn" onclick="toggleProfileEdit()">Edit Profile</button>
+    <button class="profile-save-btn" id="profileSaveBtn" onclick="saveProfile()">SAVE CHANGES</button>
+  </div>
+</div>
+
+<!-- MENU EDITOR -->
+<div id="menuEditor" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="showScreen('settings')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="logo-name" style="font-size:16px;letter-spacing:3px">MENU EDITOR</div>
+    <div></div>
+  </div>
+  <div class="editor-body">
+    <div class="admin-unlock" id="adminUnlock">
+      <svg width="40" height="40" fill="none" stroke="#C9A84C" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 16px;display:block"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <h3>Admin Access</h3>
+      <p>Enter the admin password to edit the menu</p>
+      <div class="field" style="text-align:left">
+        <label>Admin Password</label>
+        <input type="password" id="adminPassInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')unlockAdmin()"/>
+      </div>
+      <div class="error-msg" id="adminError">Incorrect password. Try again.</div>
+      <button class="btn-gold" onclick="unlockAdmin()">UNLOCK EDITOR</button>
+    </div>
+    <div id="editorContent" style="display:none">
+      <div id="categoriesList"></div>
+      <div class="add-cat-row">
+        <input class="add-cat-input" id="newCatInput" placeholder="New category name..."/>
+        <button class="add-cat-btn" onclick="addCategory()">+ ADD</button>
+      </div>
+      <button class="save-menu-btn" onclick="saveMenu()">Save Menu</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+          </html>
