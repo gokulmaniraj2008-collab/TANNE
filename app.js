@@ -114,7 +114,29 @@ window.togglePass = function(inputId, btn) {
   btn.style.color = isHidden ? 'var(--gold)' : 'var(--gray)';
 };
 
+// ══ THEME ══
+window.toggleTheme = function(isLight) {
+  if (isLight) {
+    document.body.classList.add('light-mode');
+    document.getElementById('themeModeLabel').textContent = 'LIGHT';
+    localStorage.setItem('tanne_theme', 'light');
+  } else {
+    document.body.classList.remove('light-mode');
+    document.getElementById('themeModeLabel').textContent = 'DARK';
+    localStorage.setItem('tanne_theme', 'dark');
+  }
+};
+
+function applyThemeOnLoad() {
+  const saved = localStorage.getItem('tanne_theme');
+  if (saved === 'light') {
+    document.body.classList.add('light-mode');
+  }
+}
+
 // ══ INIT ══
+applyThemeOnLoad();
+
 window.onload = async () => {
   showScreen('splash');
   try {
@@ -216,6 +238,12 @@ window.openSettings = function() {
   document.getElementById('profileAvatarLg').textContent = currentUser.charAt(0).toUpperCase();
   document.getElementById('profileName').textContent     = currentUser;
   document.getElementById('profileEmail').textContent    = currentUserEmail || '—';
+  // Sync theme toggle to current body state
+  const isLight = document.body.classList.contains('light-mode');
+  const tog = document.getElementById('themeToggle');
+  const lbl = document.getElementById('themeModeLabel');
+  if (tog) tog.checked = isLight;
+  if (lbl) lbl.textContent = isLight ? 'LIGHT' : 'DARK';
   showScreen('settings');
 };
 
@@ -506,7 +534,6 @@ window.saveEditedOrder = async function() {
   if (!entry) return;
 
   if (Object.keys(entry.items).length === 0) {
-    // If all items removed, delete the entire saved order entry
     savedOrders[currentTable].splice(editingSavedIndex, 1);
   }
 
@@ -807,7 +834,6 @@ window.deleteCategory = function(catIdx) {
 window.addItem = function(catIdx) {
   MENU[catIdx].items.push({ name: '', price: 0 });
   renderMenuEditor();
-  // Focus the new item name input
   const items = document.querySelectorAll(`#editorCat_${catIdx} .editor-item-name`);
   if (items.length) items[items.length - 1].focus();
 };
@@ -818,7 +844,6 @@ window.addCategory = function() {
 };
 
 window.saveMenuEditor = async function() {
-  // Validate: sync any focused input values before save
   document.querySelectorAll('.editor-cat-name').forEach((el, i) => {
     if (MENU[i]) MENU[i].category = el.value.trim() || MENU[i].category;
   });
