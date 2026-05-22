@@ -158,9 +158,10 @@ window.onload = async () => {
       if (snap.exists()) applySettings(snap.val());
     });
     onValue(ref(db, 'config/menu'), snap => {
-      if (snap.exists()) MENU = snap.val();
-    });
-
+  if (snap.exists() && snap.val() && snap.val().length > 0) {
+    MENU = snap.val();
+  }
+});
     setTimeout(() => showScreen('login'), 2200);
   } catch (err) {
     console.error('Init failed:', err);
