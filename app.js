@@ -429,7 +429,7 @@ window.openTable = function(num) {
   document.getElementById('orderTableTitle').textContent = `Table ${num}`;
   document.getElementById('searchInput').value = '';
   renderSavedOrders();
-  document.getElementById('menuScroll').innerHTML = '';
+  renderMenu('');
   updateCartBar();
   showScreen('order');
 };
@@ -624,17 +624,62 @@ window.changeQty = async function(item, delta) {
   updateCartBar();
 };
 
+function renderMenuStartsWith(query) {
+  const scroll = document.getElementById('menuScroll');
+  const q = query.toLowerCase().trim();
+  let html = '', anyResult = false;
+
+  MENU.forEach(cat => {
+    const filtered = cat.items.filter(item =>
+      item.name.toLowerCase().startsWith(q)
+    );
+    if (!filtered.length) return;
+    anyResult = true;
+    html += `<div class="menu-category"><div class="category-label">${cat.category}</div>`;
+    filtered.forEach(item => {
+      const qty = (orders[currentTable] && orders[currentTable][item.name]) || 0;
+      const selected = qty > 0;
+      const safeName = item.name.replace(/'/g, "\\'");
+      html += `
+        <div class="menu-item ${selected ? 'selected' : ''}">
+          <div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">${currency()}${item.price}</div>
+          </div>
+          <div class="item-qty-wrap">
+            ${selected ? `
+              <button class="qty-btn" onclick="changeQty('${safeName}', -1)">−</button>
+              <div class="qty-num">${qty}</div>
+              <button class="qty-btn" onclick="changeQty('${safeName}', 1)">+</button>
+            ` : `
+              <button class="add-btn" onclick="changeQty('${safeName}', 1)">ADD</button>
+            `}
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+
+  if (!anyResult) {
+    html = `<div class="no-results">
+      <svg width="32" height="32" fill="none" stroke="#888" stroke-width="1.5" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      No results for "${query}"
+    </div>`;
+  }
+  scroll.innerHTML = html;
+}
+
 window.filterMenu = function() {
   const q = document.getElementById('searchInput').value.trim();
-  if (q === '') {
-    document.getElementById('menuScroll').innerHTML = '';
-    return;
-  }
-  renderMenu(q);
+  if (q === '') { renderMenu(''); return; }
+  renderMenuStartsWith(q);
 };
+
 window.clearSearch = function() {
   document.getElementById('searchInput').value = '';
-  document.getElementById('menuScroll').innerHTML = '';
+  renderMenu('');
 };
 
 function updateCartBar() {
