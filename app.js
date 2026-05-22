@@ -1,4 +1,4 @@
-// ══ CONFIG LOADER — fetches Firebase keys from Vercel env via /api/config ══
+// ══ CONFIG LOADER ══
 import { initializeApp }                            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
@@ -8,45 +8,73 @@ async function loadConfig() {
   return res.json();
 }
 
-// ══ MENU ══
-const MENU = [
+// ══ DEFAULT MENU ══
+const DEFAULT_MENU = [
   { category: "Main Course", items: [
-    "Chicken Biryani","Mutton Biryani","Gilma Biryani","Chicken Noodle",
-    "Penne Pasta White Sauce Veg","Penne Pasta White Sauce Non-Veg",
-    "Mac & Cheese Pasta Veg","Mac & Cheese Pasta Non-Veg"
+    { name: "Chicken Biryani", price: 250 },
+    { name: "Mutton Biryani", price: 250 },
+    { name: "Gilma Biryani", price: 250 },
+    { name: "Chicken Noodle", price: 250 },
+    { name: "Penne Pasta White Sauce Veg", price: 250 },
+    { name: "Penne Pasta White Sauce Non-Veg", price: 250 },
+    { name: "Mac & Cheese Pasta Veg", price: 250 },
+    { name: "Mac & Cheese Pasta Non-Veg", price: 250 }
   ]},
   { category: "Starters (Non-Veg)", items: [
-    "Tanne Spl Chicken","Pallipalayam Chicken","Fish and Chips","Crab Lollipop",
-    "Vanjaram Tawa Fish Fry","Nethili Rawa Fried Fish","Beef Chukka with Coin Parotta",
-    "Yaki Tori Chicken","Tandoori Chicken Full","Tandoori Chicken Half","Chicken Tikka"
+    { name: "Tanne Spl Chicken", price: 220 },
+    { name: "Pallipalayam Chicken", price: 220 },
+    { name: "Fish and Chips", price: 220 },
+    { name: "Crab Lollipop", price: 220 },
+    { name: "Vanjaram Tawa Fish Fry", price: 220 },
+    { name: "Nethili Rawa Fried Fish", price: 220 },
+    { name: "Beef Chukka with Coin Parotta", price: 220 },
+    { name: "Yaki Tori Chicken", price: 220 },
+    { name: "Tandoori Chicken Full", price: 220 },
+    { name: "Tandoori Chicken Half", price: 220 },
+    { name: "Chicken Tikka", price: 220 }
   ]},
   { category: "Starters (Veg)", items: [
-    "Mushroom Nei Roast with Coin Parotta","Gobi Veppudu","Kalan Patani Milagu Pirattal",
-    "Thread Cottage Cheese","Thai Chilli Paneer","Kunafa Crispy Paneer","Korean Chilli Tofu",
-    "Lal Mirchi Paneer Tikka","Honey Chilli Lotus Stem","Malai Cheese Broccoli"
+    { name: "Mushroom Nei Roast with Coin Parotta", price: 180 },
+    { name: "Gobi Veppudu", price: 180 },
+    { name: "Kalan Patani Milagu Pirattal", price: 180 },
+    { name: "Thread Cottage Cheese", price: 180 },
+    { name: "Thai Chilli Paneer", price: 180 },
+    { name: "Kunafa Crispy Paneer", price: 180 },
+    { name: "Korean Chilli Tofu", price: 180 },
+    { name: "Lal Mirchi Paneer Tikka", price: 180 },
+    { name: "Honey Chilli Lotus Stem", price: 180 },
+    { name: "Malai Cheese Broccoli", price: 180 }
   ]},
-  { category: "Indian Breads", items: ["Naan","Roti","Parotta"] }
+  { category: "Indian Breads", items: [
+    { name: "Naan", price: 30 },
+    { name: "Roti", price: 30 },
+    { name: "Parotta", price: 30 }
+  ]}
 ];
-
-const PRICE = {};
-MENU.forEach(cat => cat.items.forEach(item => {
-  if      (cat.category === "Indian Breads")           PRICE[item] = 30;
-  else if (cat.category.includes("Veg"))               PRICE[item] = 180;
-  else if (cat.category === "Main Course")             PRICE[item] = 250;
-  else                                                 PRICE[item] = 220;
-}));
 
 // ══ STATE ══
 let db;
-let currentUser    = "Staff";
-let currentTable   = null;
-let orders         = {};
-let savedOrders    = {};
-let adminUnlocked  = false;
-let adminAttempts  = 0;
-let lockoutTimer   = null;
-let TABLE_COUNT    = 11;
-let settings       = { name: "TANNE RESTOBAR", gst: 5, tables: 11, currency: "₹", footer: "Thank you for dining with us!", adminCode: "TANNE2026" };
+let MENU               = JSON.parse(JSON.stringify(DEFAULT_MENU));
+let currentUser        = "Staff";
+let currentUserEmail   = "";
+let currentUserId      = null;
+let currentTable       = null;
+let orders             = {};
+let savedOrders        = {};
+let adminUnlocked      = false;
+let adminAttempts      = 0;
+let lockoutTimer       = null;
+let TABLE_COUNT        = 11;
+let settings           = { name: "TANNE RESTOBAR", gst: 5, tables: 11, currency: "₹", footer: "Thank you for dining with us!", adminCode: "TANNE2026" };
+
+// ══ PRICE LOOKUP ══
+function getPrice(itemName) {
+  for (const cat of MENU) {
+    const found = cat.items.find(i => i.name === itemName);
+    if (found) return found.price;
+  }
+  return 0;
+}
 
 // ══ HELPERS ══
 function currency() { return settings.currency || "₹"; }
@@ -55,6 +83,7 @@ function gstRate()  { return (settings.gst || 5) / 100; }
 // ══ FIREBASE SAVE ══
 async function saveOrders()      { await set(ref(db, 'orders'),      orders);      }
 async function saveSavedOrders() { await set(ref(db, 'savedOrders'), savedOrders); }
+async function saveMenuToDB()    { await set(ref(db, 'config/menu'), MENU);        }
 
 // ══ TOAST ══
 function showToast(msg) {
@@ -72,6 +101,11 @@ function showScreen(id) {
 }
 window.showScreen = showScreen;
 
+// ══ MODAL HELPERS ══
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('active');
+};
+
 // ══ TOGGLE PASSWORD VISIBILITY ══
 window.togglePass = function(inputId, btn) {
   const input = document.getElementById(inputId);
@@ -88,7 +122,6 @@ window.onload = async () => {
     const app = initializeApp(config);
     db = getDatabase(app);
 
-    // Real-time listeners
     onValue(ref(db, 'orders'), snap => {
       orders = snap.val() || {};
       if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
@@ -101,6 +134,9 @@ window.onload = async () => {
     });
     onValue(ref(db, 'config/settings'), snap => {
       if (snap.exists()) applySettings(snap.val());
+    });
+    onValue(ref(db, 'config/menu'), snap => {
+      if (snap.exists()) MENU = snap.val();
     });
 
     setTimeout(() => showScreen('login'), 2200);
@@ -151,9 +187,12 @@ window.doLogin = function() {
 
   get(ref(db, 'accounts')).then(snap => {
     const accounts = snap.val() || {};
-    const account  = Object.values(accounts).find(a => a.email === email && a.pass === pass);
-    if (!account) return showError('loginError', 'Incorrect email or password.');
-    currentUser = account.name;
+    const entry    = Object.entries(accounts).find(([, a]) => a.email === email && a.pass === pass);
+    if (!entry) return showError('loginError', 'Incorrect email or password.');
+    const [id, account] = entry;
+    currentUser      = account.name;
+    currentUserEmail = account.email;
+    currentUserId    = id;
     const initial = account.name.charAt(0).toUpperCase();
     document.getElementById('userAvatar').textContent  = initial;
     document.getElementById('orderAvatar').textContent = initial;
@@ -163,11 +202,65 @@ window.doLogin = function() {
 };
 
 window.doLogout = function() {
-  currentUser   = "Staff";
-  adminUnlocked = false;
+  currentUser      = "Staff";
+  currentUserEmail = "";
+  currentUserId    = null;
+  adminUnlocked    = false;
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPass').value  = '';
   showScreen('login');
+};
+
+// ══ SETTINGS SCREEN ══
+window.openSettings = function() {
+  document.getElementById('profileAvatarLg').textContent = currentUser.charAt(0).toUpperCase();
+  document.getElementById('profileName').textContent     = currentUser;
+  document.getElementById('profileEmail').textContent    = currentUserEmail || '—';
+  showScreen('settings');
+};
+
+window.openEditProfile = function() {
+  document.getElementById('editNameInput').value = currentUser;
+  hideError('editProfileError');
+  document.getElementById('editProfileModal').classList.add('active');
+};
+
+window.saveProfile = async function() {
+  const newName = document.getElementById('editNameInput').value.trim();
+  if (!newName) return showError('editProfileError', 'Name cannot be empty.');
+  if (!currentUserId) return showError('editProfileError', 'Session error. Please re-login.');
+  await set(ref(db, `accounts/${currentUserId}/name`), newName);
+  currentUser = newName;
+  const initial = newName.charAt(0).toUpperCase();
+  document.getElementById('userAvatar').textContent      = initial;
+  document.getElementById('orderAvatar').textContent     = initial;
+  document.getElementById('profileAvatarLg').textContent = initial;
+  document.getElementById('profileName').textContent     = newName;
+  closeModal('editProfileModal');
+  showToast('Profile updated.');
+};
+
+window.openChangePassword = function() {
+  document.getElementById('currentPassInput').value = '';
+  document.getElementById('newPassInput').value     = '';
+  hideError('changePassError');
+  document.getElementById('changePassModal').classList.add('active');
+};
+
+window.savePassword = async function() {
+  const current = document.getElementById('currentPassInput').value;
+  const next    = document.getElementById('newPassInput').value;
+  if (!current || !next) return showError('changePassError', 'Please fill in both fields.');
+  if (next.length < 6)   return showError('changePassError', 'New password must be at least 6 characters.');
+  if (!currentUserId)    return showError('changePassError', 'Session error. Please re-login.');
+
+  const snap = await get(ref(db, `accounts/${currentUserId}`));
+  if (!snap.exists() || snap.val().pass !== current)
+    return showError('changePassError', 'Current password is incorrect.');
+
+  await set(ref(db, `accounts/${currentUserId}/pass`), next);
+  closeModal('changePassModal');
+  showToast('Password updated.');
 };
 
 // ══ DASHBOARD ══
@@ -214,16 +307,16 @@ window.renderDashboard = renderDashboard;
 
 // ══ ADMIN MODAL ══
 window.openAdminModal = function() {
-  if (adminUnlocked) { showScreen('admin'); renderAdmin(); loadSettingsIntoForm(); return; }
+  if (adminUnlocked) { showScreen('admin'); renderAdmin(); loadSettingsIntoForm(); renderMenuEditor(); return; }
   if (lockoutTimer) {
     document.getElementById('adminModal').classList.add('active');
     document.getElementById('adminCodeInput').disabled = true;
     return;
   }
-  document.getElementById('adminCodeInput').value   = '';
-  document.getElementById('modalAttempts').textContent = '';
-  document.getElementById('modalTimer').textContent    = '';
-  document.getElementById('adminCodeInput').disabled   = false;
+  document.getElementById('adminCodeInput').value      = '';
+  document.getElementById('modalAttempts').textContent  = '';
+  document.getElementById('modalTimer').textContent     = '';
+  document.getElementById('adminCodeInput').disabled    = false;
   document.getElementById('adminModal').classList.add('active');
   setTimeout(() => document.getElementById('adminCodeInput').focus(), 100);
 };
@@ -241,7 +334,7 @@ window.submitAdminCode = async function() {
   if (entered === correct) {
     adminUnlocked = true; adminAttempts = 0;
     document.getElementById('adminModal').classList.remove('active');
-    showScreen('admin'); renderAdmin(); loadSettingsIntoForm();
+    showScreen('admin'); renderAdmin(); loadSettingsIntoForm(); renderMenuEditor();
   } else {
     adminAttempts++;
     const remaining = 3 - adminAttempts;
@@ -258,10 +351,10 @@ window.submitAdminCode = async function() {
         document.getElementById('modalTimer').textContent = `Try again in ${secs}s`;
         if (secs <= 0) {
           clearInterval(lockoutTimer); lockoutTimer = null; adminAttempts = 0;
-          document.getElementById('adminCodeInput').disabled = false;
-          document.getElementById('adminCodeInput').value    = '';
-          document.getElementById('modalAttempts').textContent = '';
-          document.getElementById('modalTimer').textContent    = '';
+          document.getElementById('adminCodeInput').disabled    = false;
+          document.getElementById('adminCodeInput').value       = '';
+          document.getElementById('modalAttempts').textContent  = '';
+          document.getElementById('modalTimer').textContent     = '';
         }
       }, 1000);
     } else {
@@ -280,7 +373,6 @@ function loadSettingsIntoForm() {
     if (s.tables)    document.getElementById('setTables').value    = s.tables;
     if (s.currency)  document.getElementById('setCurrency').value  = s.currency;
     if (s.footer)    document.getElementById('setFooter').value    = s.footer;
-    if (s.adminCode) document.getElementById('setAdminCode').value = '';
   });
 }
 
@@ -314,6 +406,8 @@ window.openTable = function(num) {
 window.goBack = function() { renderDashboard(); showScreen('dashboard'); };
 
 // ══ SAVED ORDERS ══
+let editingSavedIndex = null;
+
 function renderSavedOrders() {
   const wrap  = document.getElementById('savedOrdersWrap');
   const saved = (savedOrders && savedOrders[currentTable]) || [];
@@ -327,9 +421,10 @@ function renderSavedOrders() {
       </svg>
       Saved Orders
     </div>`;
-  saved.forEach(entry => {
+
+  saved.forEach((entry, idx) => {
     const lines = Object.entries(entry.items || {})
-      .map(([item, qty]) => `${item} x${qty} — ${currency()}${(PRICE[item] || 0) * qty}`)
+      .map(([item, qty]) => `${item} x${qty} — ${currency()}${getPrice(item) * qty}`)
       .join('<br>');
     html += `
       <div class="saved-order-entry">
@@ -342,13 +437,84 @@ function renderSavedOrders() {
             <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
           </svg>
           ${entry.time}
+          <button class="edit-saved-btn" onclick="openEditSaved(${idx})">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            EDIT
+          </button>
         </div>
         <div class="saved-order-items">${lines}</div>
       </div>`;
   });
+
   html += `</div>`;
   wrap.innerHTML = html;
 }
+
+window.openEditSaved = function(idx) {
+  editingSavedIndex = idx;
+  const entry = savedOrders[currentTable][idx];
+  document.getElementById('editSavedMeta').textContent = `By ${entry.by} at ${entry.time}`;
+  document.getElementById('editSavedError').classList.remove('visible');
+  renderEditSavedItems(entry.items);
+  document.getElementById('editSavedModal').classList.add('active');
+};
+
+function renderEditSavedItems(items) {
+  const wrap = document.getElementById('editSavedItems');
+  let html = `<div class="edit-saved-list">`;
+
+  Object.entries(items).forEach(([item, qty]) => {
+    const safeName = item.replace(/'/g, "\\'");
+    html += `
+      <div class="edit-saved-row" id="editRow_${btoa(item).replace(/=/g,'')}">
+        <div class="edit-saved-name">${item}</div>
+        <div class="edit-saved-price">${currency()}${getPrice(item)}</div>
+        <div class="edit-saved-qty-wrap">
+          <button class="qty-btn" onclick="changeEditQty('${safeName}', -1)">−</button>
+          <div class="qty-num" id="editQty_${btoa(item).replace(/=/g,'')}">${qty}</div>
+          <button class="qty-btn" onclick="changeEditQty('${safeName}', 1)">+</button>
+        </div>
+      </div>`;
+  });
+
+  html += `</div>`;
+  wrap.innerHTML = html;
+}
+
+window.changeEditQty = function(itemName, delta) {
+  const entry = savedOrders[currentTable][editingSavedIndex];
+  const cur   = entry.items[itemName] || 0;
+  const next  = cur + delta;
+  const key   = btoa(itemName).replace(/=/g, '');
+
+  if (next <= 0) {
+    delete entry.items[itemName];
+    const row = document.getElementById(`editRow_${key}`);
+    if (row) row.remove();
+  } else {
+    entry.items[itemName] = next;
+    const qtyEl = document.getElementById(`editQty_${key}`);
+    if (qtyEl) qtyEl.textContent = next;
+  }
+};
+
+window.saveEditedOrder = async function() {
+  const entry = savedOrders[currentTable][editingSavedIndex];
+  if (!entry) return;
+
+  if (Object.keys(entry.items).length === 0) {
+    // If all items removed, delete the entire saved order entry
+    savedOrders[currentTable].splice(editingSavedIndex, 1);
+  }
+
+  await saveSavedOrders();
+  closeModal('editSavedModal');
+  renderSavedOrders();
+  showToast('Order updated.');
+};
 
 // ══ SAVE ORDER ══
 window.saveOrder = async function() {
@@ -375,29 +541,30 @@ function renderMenu(query) {
   let html = '', anyResult = false;
 
   MENU.forEach(cat => {
-    const filtered = cat.items.filter(item => !q || item.toLowerCase().includes(q));
+    const filtered = cat.items.filter(item => !q || item.name.toLowerCase().includes(q));
     if (!filtered.length) return;
     anyResult = true;
     html += `<div class="menu-category"><div class="category-label">${cat.category}</div>`;
     filtered.forEach(item => {
-      const qty      = (orders[currentTable] && orders[currentTable][item]) || 0;
+      const qty      = (orders[currentTable] && orders[currentTable][item.name]) || 0;
       const selected = qty > 0;
       const display  = q
-        ? item.replace(new RegExp(`(${q})`, 'gi'), '<span style="color:var(--gold);font-weight:700">$1</span>')
-        : item;
+        ? item.name.replace(new RegExp(`(${q})`, 'gi'), '<span style="color:var(--gold);font-weight:700">$1</span>')
+        : item.name;
+      const safeName = item.name.replace(/'/g, "\\'");
       html += `
         <div class="menu-item ${selected ? 'selected' : ''}">
           <div>
             <div class="item-name">${display}</div>
-            <div class="item-price">${currency()}${PRICE[item] || 0}</div>
+            <div class="item-price">${currency()}${item.price}</div>
           </div>
           <div class="item-qty-wrap">
             ${selected ? `
-              <button class="qty-btn" onclick="changeQty('${item.replace(/'/g,"\\'")}', -1)">−</button>
+              <button class="qty-btn" onclick="changeQty('${safeName}', -1)">−</button>
               <div class="qty-num">${qty}</div>
-              <button class="qty-btn" onclick="changeQty('${item.replace(/'/g,"\\'")}', 1)">+</button>
+              <button class="qty-btn" onclick="changeQty('${safeName}', 1)">+</button>
             ` : `
-              <button class="add-btn" onclick="changeQty('${item.replace(/'/g,"\\'")}', 1)">ADD</button>
+              <button class="add-btn" onclick="changeQty('${safeName}', 1)">ADD</button>
             `}
           </div>
         </div>`;
@@ -434,7 +601,7 @@ function updateCartBar() {
   const tableOrders = orders[currentTable] || {};
   let count = 0, total = 0;
   Object.entries(tableOrders).forEach(([item, qty]) => {
-    count += qty; total += (PRICE[item] || 0) * qty;
+    count += qty; total += getPrice(item) * qty;
   });
   document.getElementById('cartCount').textContent = count;
   document.getElementById('cartTotal').textContent = currency() + total;
@@ -466,7 +633,7 @@ window.generateBill = function() {
 
   let subtotal = 0, html = '';
   Object.entries(merged).forEach(([item, qty]) => {
-    const price = (PRICE[item] || 0) * qty;
+    const price = getPrice(item) * qty;
     subtotal += price;
     html += `<div class="bill-row">
       <div class="item-n">${item}</div>
@@ -477,11 +644,11 @@ window.generateBill = function() {
 
   const gst   = Math.round(subtotal * gstRate());
   const total = subtotal + gst;
-  document.getElementById('billItems').innerHTML     = html;
-  document.getElementById('billSubtotal').textContent = currency() + subtotal;
-  document.getElementById('billGSTLabel').textContent = `GST (${settings.gst || 5}%)`;
-  document.getElementById('billGST').textContent      = currency() + gst;
-  document.getElementById('billTotal').textContent    = currency() + total;
+  document.getElementById('billItems').innerHTML      = html;
+  document.getElementById('billSubtotal').textContent  = currency() + subtotal;
+  document.getElementById('billGSTLabel').textContent  = `GST (${settings.gst || 5}%)`;
+  document.getElementById('billGST').textContent       = currency() + gst;
+  document.getElementById('billTotal').textContent     = currency() + total;
   document.getElementById('billFooterText').textContent = settings.footer || '';
   showScreen('bill');
 };
@@ -514,7 +681,7 @@ window.renderAdmin = function() {
     Object.entries(tableOrders).forEach(([item, qty]) => { merged[item] = (merged[item] || 0) + qty; });
     const itemCount  = Object.values(merged).reduce((a, b) => a + b, 0);
     let   tableTotal = 0;
-    Object.entries(merged).forEach(([item, qty]) => { tableTotal += (PRICE[item] || 0) * qty; });
+    Object.entries(merged).forEach(([item, qty]) => { tableTotal += getPrice(item) * qty; });
 
     if (itemCount > 0) {
       activeTables++; totalItems += itemCount; totalSales += tableTotal;
@@ -554,4 +721,107 @@ window.renderAdmin = function() {
       <div class="stat-label">Free Tables</div>
     </div>`;
   document.getElementById('adminTableList').innerHTML = html;
+};
+
+// ══ MENU EDITOR ══
+function renderMenuEditor() {
+  const wrap = document.getElementById('menuEditorWrap');
+  let html = `<div class="menu-editor">`;
+
+  MENU.forEach((cat, catIdx) => {
+    html += `
+      <div class="editor-category" id="editorCat_${catIdx}">
+        <div class="editor-cat-header">
+          <input class="editor-cat-name" value="${cat.category}"
+            onchange="updateCategoryName(${catIdx}, this.value)" placeholder="Category name"/>
+          <button class="editor-delete-cat" onclick="deleteCategory(${catIdx})" title="Delete category">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
+            </svg>
+          </button>
+        </div>`;
+
+    cat.items.forEach((item, itemIdx) => {
+      html += `
+        <div class="editor-item" id="editorItem_${catIdx}_${itemIdx}">
+          <input class="editor-item-name" value="${item.name}"
+            onchange="updateItemName(${catIdx},${itemIdx},this.value)" placeholder="Item name"/>
+          <div class="editor-price-wrap">
+            <span class="editor-currency">${currency()}</span>
+            <input class="editor-item-price" type="number" value="${item.price}"
+              onchange="updateItemPrice(${catIdx},${itemIdx},this.value)" placeholder="0"/>
+          </div>
+          <button class="editor-delete-item" onclick="deleteItem(${catIdx},${itemIdx})" title="Delete item">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>`;
+    });
+
+    html += `
+        <button class="editor-add-item" onclick="addItem(${catIdx})">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          Add Item
+        </button>
+      </div>`;
+  });
+
+  html += `
+    <button class="editor-add-cat" onclick="addCategory()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Add Category
+    </button>
+    <button class="btn-gold" style="margin-top:16px" onclick="saveMenuEditor()">
+      <span>SAVE MENU</span>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+      </svg>
+    </button>
+  </div>`;
+
+  wrap.innerHTML = html;
+}
+
+window.updateCategoryName = function(catIdx, val) { MENU[catIdx].category = val; };
+window.updateItemName     = function(catIdx, itemIdx, val) { MENU[catIdx].items[itemIdx].name = val; };
+window.updateItemPrice    = function(catIdx, itemIdx, val) { MENU[catIdx].items[itemIdx].price = parseFloat(val) || 0; };
+
+window.deleteItem = function(catIdx, itemIdx) {
+  MENU[catIdx].items.splice(itemIdx, 1);
+  renderMenuEditor();
+};
+
+window.deleteCategory = function(catIdx) {
+  if (!confirm(`Delete category "${MENU[catIdx].category}" and all its items?`)) return;
+  MENU.splice(catIdx, 1);
+  renderMenuEditor();
+};
+
+window.addItem = function(catIdx) {
+  MENU[catIdx].items.push({ name: '', price: 0 });
+  renderMenuEditor();
+  // Focus the new item name input
+  const items = document.querySelectorAll(`#editorCat_${catIdx} .editor-item-name`);
+  if (items.length) items[items.length - 1].focus();
+};
+
+window.addCategory = function() {
+  MENU.push({ category: 'New Category', items: [] });
+  renderMenuEditor();
+};
+
+window.saveMenuEditor = async function() {
+  // Validate: sync any focused input values before save
+  document.querySelectorAll('.editor-cat-name').forEach((el, i) => {
+    if (MENU[i]) MENU[i].category = el.value.trim() || MENU[i].category;
+  });
+  await saveMenuToDB();
+  showToast('Menu saved.');
 };
