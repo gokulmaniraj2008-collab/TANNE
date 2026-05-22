@@ -109,7 +109,13 @@
       <div class="logo-name sm">TANNE</div>
     </div>
     <div class="header-right">
-      <div class="avatar" id="userAvatar">S</div>
+      <button class="icon-btn" onclick="openSettings()" title="Settings">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <div class="avatar" id="userAvatar" onclick="openSettings()" style="cursor:pointer">S</div>
       <button class="logout-btn" onclick="doLogout()">LOGOUT</button>
     </div>
   </header>
@@ -230,6 +236,14 @@
       <div class="section-sub">Current order status</div>
     </div>
     <div id="adminTableList"></div>
+
+    <!-- MENU EDITOR -->
+    <div class="page-heading" style="margin-top:32px">
+      <div class="section-title">Menu Editor</div>
+      <div class="section-sub">Add, edit or delete items and categories</div>
+    </div>
+    <div id="menuEditorWrap"></div>
+
     <div class="page-heading" style="margin-top:32px">
       <div class="section-title">Settings</div>
       <div class="section-sub">Restaurant configuration</div>
@@ -268,6 +282,57 @@
   </div>
 </div>
 
+<!-- SETTINGS SCREEN -->
+<div class="screen" id="settings">
+  <header class="app-header">
+    <button class="back-btn" onclick="showScreen('dashboard')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="logo-name sm">SETTINGS</div>
+    <div style="width:34px"></div>
+  </header>
+  <div class="dashboard-body">
+    <div class="page-heading">
+      <div class="section-title">Settings</div>
+      <div class="section-sub">Manage your account and preferences</div>
+    </div>
+
+    <!-- PROFILE CARD -->
+    <div class="profile-card">
+      <div class="profile-avatar-lg" id="profileAvatarLg">S</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profileName">Staff</div>
+        <div class="profile-email" id="profileEmail">—</div>
+      </div>
+      <button class="btn-edit-profile" onclick="openEditProfile()">Edit Profile</button>
+    </div>
+
+    <div class="settings-section-label">Account</div>
+    <div class="settings-list">
+      <div class="settings-list-item" onclick="openEditProfile()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span>Edit Profile</span>
+        <svg class="chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="settings-list-item" onclick="openChangePassword()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Change Password</span>
+        <svg class="chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    </div>
+
+    <div class="settings-section-label" style="margin-top:24px">Session</div>
+    <div class="settings-list">
+      <div class="settings-list-item danger" onclick="doLogout()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Sign Out</span>
+        <svg class="chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    </div>
+    <div style="height:40px"></div>
+  </div>
+</div>
+
 <!-- ADMIN MODAL -->
 <div class="modal-overlay" id="adminModal">
   <div class="modal-card">
@@ -299,9 +364,72 @@
   </div>
 </div>
 
-<!-- TOAST -->
-<div id="toast"></div>
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal-card">
+    <div class="modal-title">Edit Profile</div>
+    <div class="modal-sub">Update your name</div>
+    <div class="field">
+      <label>Full Name</label>
+      <div class="input-wrap">
+        <svg class="input-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <input type="text" id="editNameInput" placeholder="Your full name"/>
+      </div>
+    </div>
+    <div id="editProfileError" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('editProfileModal')">CANCEL</button>
+      <button class="btn-gold" onclick="saveProfile()">
+        <span>SAVE</span>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
 
-<script src="app.js" type="module"></script>
-</body>
-  </html>
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="changePassModal">
+  <div class="modal-card">
+    <div class="modal-title">Change Password</div>
+    <div class="modal-sub">Enter current and new password</div>
+    <div class="field">
+      <label>Current Password</label>
+      <div class="input-wrap">
+        <svg class="input-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input type="password" id="currentPassInput" placeholder="Current password"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>New Password</label>
+      <div class="input-wrap">
+        <svg class="input-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input type="password" id="newPassInput" placeholder="Min 6 characters"/>
+      </div>
+    </div>
+    <div id="changePassError" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('changePassModal')">CANCEL</button>
+      <button class="btn-gold" onclick="savePassword()">
+        <span>UPDATE</span>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+  <div class="modal-overlay" id="editSavedModal">
+  <div class="modal-card modal-card-wide">
+    <div class="modal-title">Edit Saved Order</div>
+    <div class="modal-sub" id="editSavedMeta"></div>
+    <div id="editSavedItems"></div>
+    <div id="editSavedError" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('editSavedModal')">CANCEL</button>
+      <button class="btn-gold" onclick="saveEditedOrder()">
+        <span>SAVE</span>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
