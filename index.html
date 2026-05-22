@@ -1,58 +1,734 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tanne Restobar</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TANNE Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dark: #8B6914;
+  --black: #0A0A0A;
+  --black2: #111111;
+  --black3: #1A1A1A;
+  --black4: #222222;
+  --white: #F5F0E8;
+  --gray: #888;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Montserrat', sans-serif;
+  min-height: 100vh;
+}
 
-    body {
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      min-height: 100dvh; /* dynamic viewport for mobile */
-    }
+/* SCREENS */
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
 
-    .logo-container {
-      width: 90%;
-      max-width: 400px;
-      padding: 20px;
-      text-align: center;
-    }
+/* SPLASH */
+#splash {
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #1a1200 0%, #0A0A0A 70%);
+}
+.logo-wrap { text-align: center; animation: fadeUp 1.2s ease forwards; }
+.logo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: 12px;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(201,168,76,0.4);
+}
+.logo-tagline {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--gray);
+  margin-top: 8px;
+}
+.splash-bar {
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 30px auto 0;
+  animation: barGrow 1.5s 0.8s ease forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes barGrow { to { width: 200px; } }
 
-    img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 8px;
-    }
+/* LOGIN */
+#login {
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 30% 40%, #1a1000 0%, #0A0A0A 60%);
+  padding: 30px 20px;
+}
+.login-card {
+  width: 100%; max-width: 380px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 16px;
+  padding: 40px 30px;
+  animation: fadeUp 0.6s ease;
+}
+.login-logo { text-align: center; margin-bottom: 30px; }
+.login-logo .logo-name { font-size: 36px; letter-spacing: 8px; }
+.login-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 300;
+  text-align: center; margin-bottom: 28px;
+}
+.field { margin-bottom: 18px; }
+.field label {
+  display: block; font-size: 10px;
+  letter-spacing: 2px; color: var(--gold);
+  margin-bottom: 8px; text-transform: uppercase;
+}
+.field input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 8px; padding: 13px 16px;
+  color: var(--white);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px; outline: none;
+  transition: border-color 0.3s;
+}
+.field input:focus { border-color: var(--gold); }
+.forgot { text-align: right; font-size: 11px; color: var(--gray); margin-bottom: 24px; cursor: pointer; }
+.btn-gold {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+  border: none; border-radius: 8px;
+  color: var(--black);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; transition: opacity 0.2s;
+}
+.btn-gold:active { opacity: 0.85; }
+.divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.divider hr { flex: 1; border: none; border-top: 1px solid rgba(201,168,76,0.15); }
+.divider span { font-size: 11px; color: var(--gray); }
+.google-btn {
+  width: 100%; padding: 13px;
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 8px; color: var(--white);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center; gap: 10px;
+  transition: background 0.2s;
+}
+.google-btn:hover { background: rgba(201,168,76,0.08); }
+.signup-text { text-align: center; font-size: 12px; color: var(--gray); margin-top: 20px; }
+.signup-text span { color: var(--gold); cursor: pointer; font-weight: 600; }
 
-    /*
+/* HEADER */
+.app-header {
+  background: var(--black2);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.app-header .logo-name { font-size: 22px; letter-spacing: 6px; }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--black);
+}
+.logout-btn {
+  background: none;
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 6px; color: var(--gold);
+  font-size: 11px; letter-spacing: 1px;
+  padding: 5px 10px; cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.85); }
-      to   { opacity: 1; transform: scale(1); }
-    }
+/* DASHBOARD */
+#dashboard { background: var(--black); }
+.dashboard-body { padding: 20px; flex: 1; }
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 600;
+  color: var(--gold); margin-bottom: 4px;
+}
+.section-sub {
+  font-size: 11px; letter-spacing: 2px;
+  color: var(--gray); text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.table-card {
+  background: var(--black3);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 12px; padding: 18px 10px;
+  text-align: center; cursor: pointer;
+  transition: all 0.25s; position: relative; overflow: hidden;
+}
+.table-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.table-card:hover::before, .table-card.has-orders::before { opacity: 1; }
+.table-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(201,168,76,0.15);
+}
+.table-card.has-orders {
+  border-color: rgba(201,168,76,0.4);
+  background: rgba(201,168,76,0.05);
+}
+.table-icon { font-size: 26px; margin-bottom: 8px; }
+.table-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 700;
+  color: var(--gold);
+}
+.table-status { font-size: 9px; letter-spacing: 1px; color: var(--gray); margin-top: 4px; }
+.table-badge {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--gold); color: var(--black);
+  font-size: 9px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
 
-    @keyframes glowPulse {
-      0%, 100% { filter: drop-shadow(0 0 20px rgba(201,162,39,0.4)); }
-      50%       { filter: drop-shadow(0 0 50px rgba(201,162,39,0.9)); }
-    }
-  </style>
+/* ORDER PAGE */
+#order { background: var(--black); }
+.order-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.order-search-bar {
+  padding: 12px 16px;
+  background: var(--black2);
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+}
+.search-input-wrap {
+  display: flex; align-items: center;
+  background: var(--black3);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 24px; padding: 0 14px; gap: 8px;
+}
+.search-input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--white); font-family: 'Montserrat', sans-serif;
+  font-size: 13px; padding: 10px 0;
+}
+.search-input::placeholder { color: var(--gray); }
+.clear-search { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 16px; }
+
+.menu-scroll { flex: 1; overflow-y: auto; padding: 14px; }
+.menu-category { margin-bottom: 26px; }
+.category-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 600; color: var(--gold);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  padding-bottom: 8px; margin-bottom: 10px;
+}
+.menu-item {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 11px 12px; margin-bottom: 6px;
+  background: var(--black3);
+  border: 1px solid rgba(201,168,76,0.08);
+  border-radius: 10px; cursor: pointer;
+  transition: all 0.2s;
+}
+.menu-item:hover { border-color: rgba(201,168,76,0.3); background: var(--black4); }
+.menu-item.selected { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+.item-name { font-size: 13px; font-weight: 500; }
+.item-qty-wrap {
+  display: flex; align-items: center; gap: 8px;
+}
+.qty-btn {
+  width: 26px; height: 26px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid var(--gold);
+  border-radius: 50%; color: var(--gold);
+  font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: monospace; transition: background 0.2s;
+}
+.qty-btn:hover { background: rgba(201,168,76,0.3); }
+.qty-num {
+  min-width: 22px; text-align: center;
+  font-size: 14px; font-weight: 600; color: var(--white);
+}
+.add-btn {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  border: none; border-radius: 6px;
+  color: var(--black); font-size: 11px; font-weight: 700;
+  padding: 6px 12px; cursor: pointer;
+  font-family: 'Montserrat', sans-serif; letter-spacing: 1px;
+}
+
+/* CART BOTTOM */
+.cart-bar {
+  background: var(--black2);
+  border-top: 1px solid rgba(201,168,76,0.2);
+  padding: 14px 16px;
+}
+.cart-summary { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; color: var(--gray); }
+.cart-summary span { color: var(--gold); font-weight: 600; }
+.checkout-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+  border: none; border-radius: 10px;
+  color: var(--black); font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; cursor: pointer;
+}
+
+/* BILL PAGE */
+#bill { background: var(--black); }
+.bill-body { flex: 1; overflow-y: auto; padding: 20px; }
+.bill-header { text-align: center; margin-bottom: 24px; }
+.bill-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; color: var(--gold); letter-spacing: 4px;
+}
+.bill-sub { font-size: 11px; color: var(--gray); letter-spacing: 2px; margin-top: 4px; }
+.bill-divider { border: none; border-top: 1px dashed rgba(201,168,76,0.3); margin: 16px 0; }
+.bill-table-info {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--gray); margin-bottom: 16px;
+}
+.bill-table-info span { color: var(--white); }
+.bill-items { margin-bottom: 16px; }
+.bill-row {
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 9px 0;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+  font-size: 13px;
+}
+.bill-row .item-n { flex: 1; }
+.bill-row .item-q { width: 40px; text-align: center; color: var(--gray); font-size: 12px; }
+.bill-row .item-p { width: 70px; text-align: right; color: var(--gold); font-weight: 600; }
+.bill-total-row {
+  display: flex; justify-content: space-between;
+  padding: 12px 0; font-size: 15px; font-weight: 700;
+}
+.bill-total-row .t-label { color: var(--white); }
+.bill-total-row .t-val { color: var(--gold); font-size: 18px; }
+.bill-actions { display: flex; gap: 10px; margin-top: 16px; }
+.bill-actions button {
+  flex: 1; padding: 13px;
+  border-radius: 8px; font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; text-transform: uppercase;
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.btn-print {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  border: none; color: var(--black);
+}
+.back-btn {
+  background: none; border: none; color: var(--gold);
+  font-size: 22px; cursor: pointer; padding: 2px 6px;
+}
+
+/* NO RESULTS */
+.no-results {
+  text-align: center; padding: 40px 20px;
+  color: var(--gray); font-size: 13px;
+}
+.no-results div { font-size: 30px; margin-bottom: 10px; }
+</style>
 </head>
 <body>
 
-  <div class="logo-container">
-    <img src="IMG-20260522-WA0003.jpg" alt="TANNE RESTOBAR Logo">
+<!-- ══ SPLASH ══ -->
+<div id="splash" class="screen active">
+  <div class="logo-wrap">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto 20px">
+      <circle cx="40" cy="40" r="38" stroke="#C9A84C" stroke-width="1.5"/>
+      <path d="M26 28 Q40 18 54 28 L54 52 Q40 62 26 52 Z" stroke="#C9A84C" stroke-width="1.2" fill="none"/>
+      <path d="M33 36 L40 30 L47 36 L47 48 L40 54 L33 48 Z" fill="#C9A84C" opacity="0.15"/>
+      <path d="M33 36 L40 30 L47 36 L47 48 L40 54 L33 48 Z" stroke="#C9A84C" stroke-width="1"/>
+      <line x1="40" y1="30" x2="40" y2="54" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+      <line x1="33" y1="42" x2="47" y2="42" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+    </svg>
+    <div class="logo-name">SHRUHH</div>
+    <div class="logo-tagline">Fine Dining Experience</div>
+    <div class="splash-bar"></div>
   </div>
+</div>
 
+<!-- ══ LOGIN ══ -->
+<div id="login" class="screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-name">SHRUHH</div>
+    </div>
+    <div class="login-title">Welcome Back</div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="staff@shruhh.com"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••"/>
+    </div>
+    <div class="forgot">Forgot Password?</div>
+    <button class="btn-gold" onclick="doLogin()">LOGIN</button>
+    <div class="divider"><hr/><span>OR</span><hr/></div>
+    <button class="google-btn" onclick="doLogin()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+    <div class="signup-text">New staff member? <span onclick="doLogin()">Sign Up</span></div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashboard" class="screen">
+  <div class="app-header">
+    <div class="logo-name">SHRUHH</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="avatar" id="userAvatar">S</div>
+      <button class="logout-btn" onclick="doLogout()">LOGOUT</button>
+    </div>
+  </div>
+  <div class="dashboard-body">
+    <div class="section-title">Table Overview</div>
+    <div class="section-sub">Select a table to manage orders</div>
+    <div class="tables-grid" id="tablesGrid"></div>
+  </div>
+</div>
+
+<!-- ══ ORDER PAGE ══ -->
+<div id="order" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="goBack()">&#8592;</button>
+    <div class="logo-name">SHRUHH</div>
+    <div class="avatar" id="orderAvatar">S</div>
+  </div>
+  <div style="padding:12px 16px 0;background:var(--black2);border-bottom:1px solid rgba(201,168,76,0.1)">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold)" id="orderTableTitle">Table 1</div>
+    <div style="font-size:10px;letter-spacing:2px;color:var(--gray);padding-bottom:10px">TAP ITEM TO ADD · ADJUST QUANTITY</div>
+  </div>
+  <div class="order-body">
+    <div class="order-search-bar">
+      <div class="search-input-wrap">
+        <svg width="16" height="16" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" id="searchInput" placeholder="Search menu..." oninput="filterMenu()"/>
+        <button class="clear-search" onclick="clearSearch()">&#x2715;</button>
+      </div>
+    </div>
+    <div class="menu-scroll" id="menuScroll"></div>
+    <div class="cart-bar">
+      <div class="cart-summary">
+        <div>Items: <span id="cartCount">0</span></div>
+        <div>Total: <span id="cartTotal">₹0</span></div>
+      </div>
+      <button class="checkout-btn" onclick="generateBill()">Generate Bill</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BILL PAGE ══ -->
+<div id="bill" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="showScreen('order')">&#8592;</button>
+    <div class="logo-name">SHRUHH</div>
+    <div></div>
+  </div>
+  <div class="bill-body">
+    <div class="bill-header">
+      <div class="bill-title">SHRUHH</div>
+      <div class="bill-sub">FINE DINING · BILL RECEIPT</div>
+    </div>
+    <hr class="bill-divider"/>
+    <div class="bill-table-info">
+      <div>Table: <span id="billTable">-</span></div>
+      <div>Date: <span id="billDate">-</span></div>
+      <div>Time: <span id="billTime">-</span></div>
+    </div>
+    <hr class="bill-divider"/>
+    <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:1px;color:var(--gray);padding-bottom:8px">
+      <span>ITEM</span><span>QTY</span><span>PRICE</span>
+    </div>
+    <div class="bill-items" id="billItems"></div>
+    <hr class="bill-divider"/>
+    <div class="bill-total-row">
+      <div class="t-label">Subtotal</div>
+      <div class="t-val" id="billSubtotal">₹0</div>
+    </div>
+    <div class="bill-total-row" style="font-size:12px;opacity:0.7">
+      <div class="t-label">GST (5%)</div>
+      <div class="t-val" id="billGST">₹0</div>
+    </div>
+    <hr class="bill-divider"/>
+    <div class="bill-total-row" style="font-size:17px">
+      <div class="t-label">TOTAL</div>
+      <div class="t-val" id="billTotal">₹0</div>
+    </div>
+    <div class="bill-actions">
+      <button class="btn-outline" onclick="clearTable()">Clear Table</button>
+      <button class="btn-print" onclick="window.print()">Print Bill</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ DATA ══
+const MENU = [
+  {
+    category: "Main Course",
+    items: [
+      "Chicken Biryani","Mutton Biryani","Gilma Biryani",
+      "Chicken Noodle",
+      "Penne Pasta White Sauce Veg","Penne Pasta White Sauce Non-Veg",
+      "Mac & Cheese Pasta Veg","Mac & Cheese Pasta Non-Veg"
+    ]
+  },
+  {
+    category: "Starters (Non-Veg)",
+    items: [
+      "Tanne Spl Chicken","Pallipalayam Chicken","Fish and Chips",
+      "Crab Lollipop","Vanjaram Tawa Fish Fry","Nethili Rawa Fried Fish",
+      "Beef Chukka with Coin Parotta","Yaki Tori Chicken",
+      "Tandoori Chicken Full","Tandoori Chicken Half","Chicken Tikka"
+    ]
+  },
+  {
+    category: "Starters (Veg)",
+    items: [
+      "Mushroom Nei Roast with Coin Parotta","Gobi Veppudu",
+      "Kalan Patani Milagu Pirattal","Thread Cottage Cheese",
+      "Thai Chilli Paneer","Kunafa Crispy Paneer","Korean Chilli Tofu",
+      "Lal Mirchi Paneer Tikka","Honey Chilli Lotus Stem","Malai Cheese Broccoli"
+    ]
+  },
+  {
+    category: "Indian Breads",
+    items: ["Naan","Roti","Parotta"]
+  }
+];
+
+// Prices (simple fixed pricing)
+const PRICE = {};
+MENU.forEach(cat => cat.items.forEach(item => {
+  // Auto-assign reasonable prices
+  if(cat.category === "Indian Breads") PRICE[item] = 30;
+  else if(cat.category.includes("Veg")) PRICE[item] = 180;
+  else if(cat.category === "Main Course") PRICE[item] = 250;
+  else PRICE[item] = 220;
+}));
+
+// ══ STATE ══
+let currentUser = "Staff";
+let currentTable = null;
+// orders: { "Table 1": { "Chicken Biryani": 2, ... }, ... }
+let orders = JSON.parse(localStorage.getItem('shruhh_orders') || '{}');
+
+// ══ INIT ══
+window.onload = () => {
+  setTimeout(() => showScreen('login'), 2200);
+};
+
+function saveOrders() {
+  localStorage.setItem('shruhh_orders', JSON.stringify(orders));
+}
+
+// ══ SCREENS ══
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══ LOGIN ══
+function doLogin() {
+  const email = document.getElementById('loginEmail').value || "staff@shruhh.com";
+  currentUser = email.split('@')[0] || "Staff";
+  currentUser = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
+  document.getElementById('userAvatar').textContent = currentUser.charAt(0).toUpperCase();
+  document.getElementById('orderAvatar').textContent = currentUser.charAt(0).toUpperCase();
+  renderDashboard();
+  showScreen('dashboard');
+}
+
+function doLogout() {
+  showScreen('login');
+}
+
+// ══ DASHBOARD ══
+function renderDashboard() {
+  const grid = document.getElementById('tablesGrid');
+  grid.innerHTML = '';
+  for(let i = 1; i <= 11; i++) {
+    const key = `Table ${i}`;
+    const tableOrders = orders[key] || {};
+    const count = Object.values(tableOrders).reduce((a,b)=>a+b,0);
+    const hasOrders = count > 0;
+    grid.innerHTML += `
+      <div class="table-card ${hasOrders?'has-orders':''}" onclick="openTable(${i})">
+        ${hasOrders ? `<div class="table-badge">${count}</div>` : ''}
+        <div class="table-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="10" width="22" height="3" rx="1.5" fill="${hasOrders?'#C9A84C':'#444'}"/>
+            <rect x="6" y="13" width="2" height="9" rx="1" fill="${hasOrders?'#C9A84C':'#444'}"/>
+            <rect x="20" y="13" width="2" height="9" rx="1" fill="${hasOrders?'#C9A84C':'#444'}"/>
+            <rect x="5" y="7" width="18" height="4" rx="2" fill="${hasOrders?'#8B6914':'#333'}"/>
+          </svg>
+        </div>
+        <div class="table-num">Table ${i}</div>
+        <div class="table-status">${hasOrders ? count+' items' : 'Available'}</div>
+      </div>`;
+  }
+}
+
+// ══ ORDER ══
+function openTable(num) {
+  currentTable = `Table ${num}`;
+  if(!orders[currentTable]) orders[currentTable] = {};
+  document.getElementById('orderTableTitle').textContent = currentTable;
+  document.getElementById('searchInput').value = '';
+  renderMenu('');
+  updateCartBar();
+  showScreen('order');
+}
+
+function goBack() {
+  renderDashboard();
+  showScreen('dashboard');
+}
+
+function renderMenu(query) {
+  const scroll = document.getElementById('menuScroll');
+  const q = query.toLowerCase().trim();
+  let html = '';
+  let anyResult = false;
+
+  MENU.forEach(cat => {
+    const filtered = cat.items.filter(item =>
+      !q || item.toLowerCase().includes(q)
+    );
+    if(filtered.length === 0) return;
+    anyResult = true;
+    html += `<div class="menu-category">
+      <div class="category-label">${cat.category}</div>`;
+    filtered.forEach(item => {
+      const qty = (orders[currentTable] && orders[currentTable][item]) || 0;
+      const selected = qty > 0;
+      html += `
+        <div class="menu-item ${selected?'selected':''}" id="mi_${btoa(item).replace(/=/g,'')}">
+          <div class="item-name">${item}</div>
+          <div class="item-qty-wrap">
+            ${selected ? `
+              <button class="qty-btn" onclick="changeQty('${item}',-1);event.stopPropagation()">−</button>
+              <div class="qty-num">${qty}</div>
+              <button class="qty-btn" onclick="changeQty('${item}',1);event.stopPropagation()">+</button>
+            ` : `
+              <button class="add-btn" onclick="changeQty('${item}',1);event.stopPropagation()">ADD</button>
+            `}
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+
+  if(!anyResult) {
+    html = `<div class="no-results"><div>🔍</div>No results for "${query}"</div>`;
+  }
+  scroll.innerHTML = html;
+}
+
+function changeQty(item, delta) {
+  if(!orders[currentTable]) orders[currentTable] = {};
+  const cur = orders[currentTable][item] || 0;
+  const next = cur + delta;
+  if(next <= 0) delete orders[currentTable][item];
+  else orders[currentTable][item] = next;
+  saveOrders();
+  renderMenu(document.getElementById('searchInput').value);
+  updateCartBar();
+}
+
+function filterMenu() {
+  renderMenu(document.getElementById('searchInput').value);
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  renderMenu('');
+}
+
+function updateCartBar() {
+  const tableOrders = orders[currentTable] || {};
+  let count = 0, total = 0;
+  Object.entries(tableOrders).forEach(([item, qty]) => {
+    count += qty;
+    total += (PRICE[item] || 0) * qty;
+  });
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartTotal').textContent = '₹' + total;
+}
+
+// ══ BILL ══
+function generateBill() {
+  const tableOrders = orders[currentTable] || {};
+  const items = Object.entries(tableOrders).filter(([,q])=>q>0);
+  if(items.length === 0) { alert('No items added yet!'); return; }
+
+  const now = new Date();
+  document.getElementById('billTable').textContent = currentTable;
+  document.getElementById('billDate').textContent = now.toLocaleDateString('en-IN');
+  document.getElementById('billTime').textContent = now.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+
+  let subtotal = 0;
+  let html = '';
+  items.forEach(([item, qty]) => {
+    const price = (PRICE[item] || 0) * qty;
+    subtotal += price;
+    html += `<div class="bill-row">
+      <div class="item-n">${item}</div>
+      <div class="item-q">x${qty}</div>
+      <div class="item-p">₹${price}</div>
+    </div>`;
+  });
+
+  const gst = Math.round(subtotal * 0.05);
+  const total = subtotal + gst;
+
+  document.getElementById('billItems').innerHTML = html;
+  document.getElementById('billSubtotal').textContent = '₹' + subtotal;
+  document.getElementById('billGST').textContent = '₹' + gst;
+  document.getElementById('billTotal').textContent = '₹' + total;
+
+  showScreen('bill');
+}
+
+function clearTable() {
+  if(confirm(`Clear all orders for ${currentTable}?`)) {
+    orders[currentTable] = {};
+    saveOrders();
+    renderDashboard();
+    showScreen('dashboard');
+  }
+}
+</script>
 </body>
 </html>
