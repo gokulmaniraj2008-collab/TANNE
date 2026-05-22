@@ -559,7 +559,7 @@ window.saveOrder = async function() {
   await saveOrders();
   await saveSavedOrders();
   renderSavedOrders();
-  renderMenu('');
+  document.getElementById('menuScroll').innerHTML = '';
   updateCartBar();
   showToast(`Order saved by ${currentUser} at ${time}`);
 };
@@ -624,8 +624,18 @@ window.changeQty = async function(item, delta) {
   updateCartBar();
 };
 
-window.filterMenu = function() { renderMenu(document.getElementById('searchInput').value); };
-window.clearSearch = function() { document.getElementById('searchInput').value = ''; renderMenu(''); };
+window.filterMenu = function() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q === '') {
+    document.getElementById('menuScroll').innerHTML = '';
+    return;
+  }
+  renderMenu(q);
+};
+window.clearSearch = function() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('menuScroll').innerHTML = '';
+};
 
 function updateCartBar() {
   const tableOrders = orders[currentTable] || {};
