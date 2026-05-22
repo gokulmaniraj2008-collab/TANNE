@@ -429,7 +429,7 @@ window.openTable = function(num) {
   document.getElementById('orderTableTitle').textContent = `Table ${num}`;
   document.getElementById('searchInput').value = '';
   renderSavedOrders();
-  renderMenu('');
+  document.getElementById('menuScroll').innerHTML = '';
   updateCartBar();
   showScreen('order');
 };
