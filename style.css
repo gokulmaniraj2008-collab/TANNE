@@ -203,3 +203,39 @@
   .editor-item { flex-wrap: wrap; }
   .editor-item-name { min-width: 0; }
 }
+
+/* ══ EDIT SAVED ORDER ══ */
+.modal-card-wide { max-width: 420px; }
+
+.edit-saved-btn {
+  background: var(--gold-muted);
+  border: 1px solid var(--gold-border);
+  border-radius: 6px; color: var(--gold);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  padding: 4px 8px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: auto;
+  transition: background var(--transition), border-color var(--transition);
+}
+.edit-saved-btn:hover { background: rgba(201,168,76,0.22); border-color: var(--gold); }
+
+.edit-saved-list { margin-bottom: 16px; }
+
+.edit-saved-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+}
+.edit-saved-row:last-child { border-bottom: none; }
+
+.edit-saved-name {
+  flex: 1; font-size: 12px; color: var(--white); line-height: 1.3;
+}
+.edit-saved-price {
+  font-size: 11px; color: var(--gold); font-weight: 600;
+  flex-shrink: 0;
+}
+.edit-saved-qty-wrap {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
