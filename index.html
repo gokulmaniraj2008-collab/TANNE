@@ -132,6 +132,23 @@
   </div>
 </div>
 
-<script src="app.js"></script>
+<!-- ADMIN -->
+<div class="screen" id="admin">
+  <div class="app-header">
+    <button onclick="showScreen('dashboard')" style="background:none;border:none;color:var(--gold);font-size:20px;cursor:pointer;">←</button>
+    <div class="logo-name">ADMIN</div>
+    <div style="width:34px;"></div>
+  </div>
+  <div class="dashboard-body">
+    <div class="section-title">Overview</div>
+    <div class="section-sub">Live orders & sales</div>
+    <div class="admin-stats" id="adminStats"></div>
+    <div class="section-title" style="margin-top:24px;">All Tables</div>
+    <div class="section-sub">Current order status</div>
+    <div id="adminTableList"></div>
+  </div>
+</div>
+
+<script src="app.js" type="module"></script>
 </body>
 </html>
