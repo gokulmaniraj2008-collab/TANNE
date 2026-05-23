@@ -882,14 +882,18 @@ window.updateCategoryName = function(catIdx, val) { MENU[catIdx].category = val;
 window.updateItemName     = function(catIdx, itemIdx, val) { MENU[catIdx].items[itemIdx].name = val; };
 window.updateItemPrice    = function(catIdx, itemIdx, val) { MENU[catIdx].items[itemIdx].price = parseFloat(val) || 0; };
 
-window.deleteItem = function(catIdx, itemIdx) {
+// REPLACE WITH:
+window.deleteItem = async function(catIdx, itemIdx) {
   MENU[catIdx].items.splice(itemIdx, 1);
+  await set(ref(db, `config/menu/${catIdx}/items`), MENU[catIdx].items);
   renderMenuEditor();
 };
 
-window.deleteCategory = function(catIdx) {
+// REPLACE WITH:
+window.deleteCategory = async function(catIdx) {
   if (!confirm(`Delete category "${MENU[catIdx].category}" and all its items?`)) return;
   MENU.splice(catIdx, 1);
+  await set(ref(db, 'config/menu'), MENU);
   renderMenuEditor();
 };
 
@@ -909,6 +913,9 @@ window.saveMenuEditor = async function() {
   document.querySelectorAll('.editor-cat-name').forEach((el, i) => {
     if (MENU[i]) MENU[i].category = el.value.trim() || MENU[i].category;
   });
-  await saveMenuToDB();
+  const saves = MENU.map((cat, i) =>
+    set(ref(db, `config/menu/${i}`), cat)
+  );
+  await Promise.all(saves);
   showToast('Menu saved.');
 };
